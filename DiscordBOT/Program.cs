@@ -1,12 +1,53 @@
-﻿using System;
+﻿using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using System;
+using System.IO;
+using System.Runtime.Serialization.Json;
+using System.Threading.Tasks;
 
 namespace DiscordBOT
 {
     class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
+               => new Program().MainAsync().GetAwaiter().GetResult();
+        private CommandService command;
+        public async Task MainAsync()
         {
-            Console.WriteLine("Hello World!");
+            var client = new DiscordSocketClient();
+            DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(string));
+            client.Log += Log;
+            client.MessageReceived += MessageReceived;
+            client.Ready += () =>
+            {
+                Console.WriteLine("Bot is connected!");
+                return Task.CompletedTask;
+            };
+            string token ="";
+            using (FileStream fs = new FileStream("people.json", FileMode.OpenOrCreate))
+            {
+               token = (string)jsonFormatter.ReadObject(fs);
+            }
+            
+
+            await client.LoginAsync(TokenType.Bot, token);
+            await client.StartAsync();
+             
+            await Task.Delay(-1);
+        }
+        private Task Log(LogMessage msg)
+        {
+            Console.WriteLine(msg.ToString());
+            return Task.CompletedTask;
+
+        }
+        private async Task MessageReceived(SocketMessage message)
+        {
+            if (message.Content == "!ping")
+            {
+                await message.Channel.SendMessageAsync("Pong!");
+            }
         }
     }
 }
