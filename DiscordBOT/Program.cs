@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 
@@ -15,8 +16,12 @@ namespace DiscordBOT
         private CommandService command;
         public async Task MainAsync()
         {
-            var client = new DiscordSocketClient();
-            DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(string));
+            command = new CommandService(new CommandServiceConfig()
+            { LogLevel = LogSeverity.Debug,
+                DefaultRunMode = RunMode.Async,
+                CaseSensitiveCommands = true
+            });
+            var client = new DiscordSocketClient(); 
             client.Log += Log;
             client.MessageReceived += MessageReceived;
             client.Ready += () =>
@@ -24,10 +29,14 @@ namespace DiscordBOT
                 Console.WriteLine("Bot is connected!");
                 return Task.CompletedTask;
             };
-            string token ="";
-            using (FileStream fs = new FileStream("people.json", FileMode.OpenOrCreate))
+            string token =""; 
+            using (FileStream fs = new FileStream(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location).Replace(@"bin\Debug\netcoreapp2.1", @"Data\Token.txt"), FileMode.Open,FileAccess.Read))
             {
-               token = (string)jsonFormatter.ReadObject(fs);
+                using(StreamReader sr = new StreamReader(fs))
+                {
+                    token = sr.ReadToEnd();
+                }
+             
             }
             
 

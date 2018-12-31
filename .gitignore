@@ -260,3 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 /DiscordBOT/token.json
+/DiscordBOT/Data
