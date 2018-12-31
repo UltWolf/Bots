@@ -1,36 +1,34 @@
-﻿using Discord;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+
+using Newtonsoft.Json;
+
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using System;
-using System.IO;
-using System.Reflection;
-using System.Runtime.Serialization.Json;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DiscordBOT
 {
     class Program
     {
+       private  DiscordSocketClient client ;
+        private IServiceProvider services;
         public static void Main(string[] args)
                => new Program().MainAsync().GetAwaiter().GetResult();
         private CommandService command;
         public async Task MainAsync()
         {
-            command = new CommandService(new CommandServiceConfig()
-            { LogLevel = LogSeverity.Debug,
-                DefaultRunMode = RunMode.Async,
-                CaseSensitiveCommands = true
-            });
-            var client = new DiscordSocketClient(); 
-            client.Log += Log;
-            client.MessageReceived += MessageReceived;
-            client.Ready += () =>
-            {
-                Console.WriteLine("Bot is connected!");
-                return Task.CompletedTask;
-            };
-            string token =""; 
-            using (FileStream fs = new FileStream(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location).Replace(@"bin\Debug\netcoreapp2.1", @"Data\Token.txt"), FileMode.Open,FileAccess.Read))
+            client =  new DiscordSocketClient();
+            command = new CommandService();
+            client.Log += Log;  
+            string token = "";
+           
+            string path = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location).Replace(@"bin\Debug\netcoreapp2.1", @"Data\Token.txt");
+            using (FileStream fs = new FileStream(path, FileMode.Open,FileAccess.Read))
             {
                 using(StreamReader sr = new StreamReader(fs))
                 {
@@ -38,12 +36,19 @@ namespace DiscordBOT
                 }
              
             }
-            
 
+            services = new ServiceCollection()
+              .BuildServiceProvider();
+            await InstallCommands();
             await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
              
             await Task.Delay(-1);
+        }
+        public async Task InstallCommands()
+        { 
+            client.MessageReceived += MessageReceived;
+            await command.AddModulesAsync(Assembly.GetEntryAssembly(),services);
         }
         private Task Log(LogMessage msg)
         {
@@ -51,11 +56,20 @@ namespace DiscordBOT
             return Task.CompletedTask;
 
         }
-        private async Task MessageReceived(SocketMessage message)
-        {
-            if (message.Content == "!ping")
+        
+        public async Task MessageReceived(SocketMessage messageParam)
+        { 
+            var message = messageParam as SocketUserMessage;
+            if (message == null) return; 
+            int argPos = 0; 
+            if (!(message.HasCharPrefix('!', ref argPos) || message.HasMentionPrefix(client.CurrentUser, ref argPos))) return;
+           
+            var context = new CommandContext(client, message);  
+            var result = await command.ExecuteAsync(context, argPos, services);
+            if (!result.IsSuccess)
             {
-                await message.Channel.SendMessageAsync("Pong!");
+                Console.WriteLine(DateTime.Now + " Error:" + result.ErrorReason);
+                await context.Channel.SendMessageAsync("We have some problems, please contact with admins.");
             }
         }
     }
