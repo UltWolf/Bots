@@ -23,8 +23,8 @@ namespace DiscordBOT
         public async Task MainAsync()
         {
             client =  new DiscordSocketClient();
-            command = new CommandService();
-            client.Log += Log;  
+            command = new CommandService(); 
+            client.Log += Log; 
             string token = "";
            
             string path = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location).Replace(@"bin\Debug\netcoreapp2.1", @"Data\Token.txt");
@@ -45,6 +45,7 @@ namespace DiscordBOT
              
             await Task.Delay(-1);
         }
+       
         public async Task InstallCommands()
         { 
             client.MessageReceived += MessageReceived;
@@ -61,7 +62,7 @@ namespace DiscordBOT
         { 
             var message = messageParam as SocketUserMessage;
             if (message == null) return; 
-            int argPos = 0; 
+            int argPos = 0;
             if (!(message.HasCharPrefix('!', ref argPos) || message.HasMentionPrefix(client.CurrentUser, ref argPos))) return;
            
             var context = new CommandContext(client, message);  
@@ -72,5 +73,6 @@ namespace DiscordBOT
                 await context.Channel.SendMessageAsync("We have some problems, please contact with admins.");
             }
         }
+        
     }
 }
