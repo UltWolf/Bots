@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackBot", "SlackBot\SlackB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordBOT", "DiscordBOT\DiscordBOT.csproj", "{ECA68962-7002-4B66-B132-1ED0B785F100}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Music discord bot", "Music discord bot\Music discord bot.csproj", "{1C05416D-0CD9-4908-BD38-90BF78835278}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{ECA68962-7002-4B66-B132-1ED0B785F100}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECA68962-7002-4B66-B132-1ED0B785F100}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECA68962-7002-4B66-B132-1ED0B785F100}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C05416D-0CD9-4908-BD38-90BF78835278}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C05416D-0CD9-4908-BD38-90BF78835278}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C05416D-0CD9-4908-BD38-90BF78835278}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C05416D-0CD9-4908-BD38-90BF78835278}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
