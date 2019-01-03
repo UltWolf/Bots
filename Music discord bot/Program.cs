@@ -19,10 +19,10 @@ namespace Music_discord_bot
         public async Task MainAsync()
         {
             client = new DiscordSocketClient();
-           
-            command = new CommandService()  ;
-      
-           
+
+            command = new CommandService();
+
+
 
             client.Log += Log;
             string token = "";
@@ -38,6 +38,7 @@ namespace Music_discord_bot
             }
 
             services = new ServiceCollection()
+                .AddSingleton(new AudioClasses.AudioServices())
               .BuildServiceProvider();
             await InstallCommands();
             await client.LoginAsync(TokenType.Bot, token);
@@ -46,7 +47,7 @@ namespace Music_discord_bot
             await Task.Delay(-1);
         }
 
-       
+        
         public async Task InstallCommands()
         {
             client.MessageReceived += MessageReceived;

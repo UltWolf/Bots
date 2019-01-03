@@ -11,8 +11,4 @@
     <PackageReference Include="FFmpeg.Nightly" Version="20181218.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="AudioClasses\" />
-  </ItemGroup>
-
 </Project>
